@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>111306049_HW6_1A2B</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .record {
+            margin-top: 20px;
+            background: #eef;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>111306049_HW6_1A2B</h1>
+    <div class="container">
+        <label for="guess">請輸入4個不重複的數字：</label>
+        <input type="text" id="guess" placeholder="例如：1234">
+        <button onclick="checkGuess()">猜！</button>
+
+        <div class="record">
+            <h3>遊戲紀錄：</h3>
+            <div id="history"></div>
+        </div>
+    </div>
+
+    <script>
+        let answer = generateAnswer();
+        let attempts = 0;
+
+        function generateAnswer() {
+            let digits = Array.from({ length: 10 }, (_, i) => i);
+            let result = [];
+            while (result.length < 4) {
+                let index = Math.floor(Math.random() * digits.length);
+                result.push(digits[index]);
+                digits.splice(index, 1);
+            }
+            return result.join('');
+        }
+
+        function checkGuess() {
+            const guessInput = document.getElementById("guess");
+            const guess = guessInput.value;
+
+            if (!isValidGuess(guess)) {
+                alert("請輸入4個不重複的數字！");
+                return;
+            }
+
+            attempts++;
+
+            const result = calculateResult(guess);
+            recordHistory(guess, result);
+
+            if (result === "4A0B") {
+                alert(`恭喜答對！共猜了 ${attempts} 次！`);
+                resetGame();
+            }
+
+            guessInput.value = ""; // 清空輸入欄位
+        }
+
+        function isValidGuess(guess) {
+            if (guess.length !== 4 || isNaN(guess)) return false;
+            const digits = new Set(guess);
+            return digits.size === 4;
+        }
+
+        function calculateResult(guess) {
+            let a = 0, b = 0;
+            for (let i = 0; i < 4; i++) {
+                if (guess[i] === answer[i]) {
+                    a++;
+                } else if (answer.includes(guess[i])) {
+                    b++;
+                }
+            }
+            return `${a}A${b}B`;
+        }
+
+        function recordHistory(guess, result) {
+            const historyDiv = document.getElementById("history");
+            const entry = document.createElement("p");
+            entry.textContent = `第${attempts}次: ${guess} → ${result}`;
+            historyDiv.appendChild(entry);
+        }
+
+        function resetGame() {
+            answer = generateAnswer();
+            attempts = 0;
+            document.getElementById("history").innerHTML = "";
+            alert("遊戲已重置，開始新一局！");
+        }
+
+        console.log("謎底 (供測試用):", answer); // 測試用，可刪除
+    </script>
+</body>
+</html>
